@@ -1,3 +1,7 @@
+from re import L
+from sklearn import compose
+
+
 HW_SOURCE_FILE=__file__
 
 
@@ -12,6 +16,14 @@ def pascal(row, column):
     3
     """
     "*** YOUR CODE HERE ***"
+    if column < 0:
+        return 0
+    if row < column:
+        return 0
+    if row == 0:
+        return 1
+    else:
+        return pascal(row-1, column-1) + pascal(row-1, column)
 
 
 def compose1(f, g):
@@ -40,6 +52,9 @@ def repeated(f, n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n == 0:
+        return lambda x: x
+    return compose1(f, repeated(f, n-1))
 
 
 def num_eights(x):
@@ -64,6 +79,9 @@ def num_eights(x):
     True
     """
     "*** YOUR CODE HERE ***"
+    if x == 0:
+        return 0
+    return (x % 10 == 8) + num_eights(x//10)
 
 
 def pingpong(n):
@@ -99,4 +117,12 @@ def pingpong(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    def helper(i, val, dir):
+        if i == n:
+            return val
+        elif i % 8 == 0 or num_eights(i):
+            return helper(i+1, val-dir, -dir)
+        else:
+            return helper(i+1, val+dir, dir)
+    return helper(1, 1, 1)
 
