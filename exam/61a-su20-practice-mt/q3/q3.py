@@ -22,14 +22,17 @@ def close(n, smallest=10, d=10):
     143576
     >>> close(812348567)
     1234567
+    
+    smallest - minimum of i+2, i+3, ...
+    d - minimum of i+1, i+2, ...
     """
     if n == 0:
-      return ______
+      return 0
     no = close(n//10, smallest, d)
-    if smallest > ______:
-        yes = ______
-        return ______(yes, no)
-    return ______
+    if smallest > n % 10:
+        yes = close(n//10, d, min(d, n%10)) * 10 + n % 10
+        return max(yes, no)
+    return no
 
 # ORIGINAL SKELETON FOLLOWS
 

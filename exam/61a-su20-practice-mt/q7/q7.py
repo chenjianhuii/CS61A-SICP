@@ -1,4 +1,7 @@
 
+from torch import long
+
+
 def longest_seq( tr ):
     """ Given a tree, t, find the length of the longest downward sequence of node
     labels in the tree that are increasing consecutive integers. The length of the
@@ -15,14 +18,14 @@ def longest_seq( tr ):
         """ Returns longest downward sequence of nodes starting at T whose
         labels are consecutive integers. Updates max_len to that length ,
         if greater. """
-        ______
+        nonlocal max_len
         n = 1
-        if ______:
-            for ______ in ______:
-                ______
-                if ______:
-                    n = ______
-            max_len = ______
+        if not t.is_leaf():
+            for b in t.branches:
+                temp = longest(b)
+                if b.label == t.label + 1:
+                    n = max(temp + 1, n)
+            max_len = max(max_len, n)
         return n
     longest(tr)
     return max_len
