@@ -1,3 +1,6 @@
+from curses import nonl
+
+
 email = 'example_key'
 
 def cat(password, limit):
@@ -27,20 +30,20 @@ def cat(password, limit):
     >>> hacker(2) # correct attempt to gain access
     'Successfully unlocked!'
     """
-    ______
-    ______
+    count = 0
+    times = 0
     def attempt(digit):
-        ______
-        ______
-        if ______:
-            return ______
-        if ______:
-            ______
-            if ______:
-                return ______
+        nonlocal count
+        nonlocal times
+        if count == limit:
+            return 'The safe is now inaccessible!'
+        if digit == password[times]:
+            times += 1
+            if times == len(password):
+                return 'Successfully unlocked!'
         else:
-            ______
-    return ______
+            count += 1
+    return attempt
 
 # ORIGINAL SKELETON FOLLOWS
 

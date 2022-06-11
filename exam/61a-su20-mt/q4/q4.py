@@ -62,17 +62,17 @@ def lemon(xv):
     >>> lemon_y[0] is y[0]
     False
     """
-    lemon_lookup = []
+    lemon_lookup = [] #cache for infinitely self-contained list
     def helper(xv):
-        if ______:
-            return ______
-        for old_new in ______:
-            if ______:
+        if not isinstance(xv, list):
+            return xv
+        for old_new in lemon_lookup:
+            if old_new[0] is xv:
                 return old_new[1]
         new_xv = []
         lemon_lookup.append((xv, new_xv))
-        for element in ______:
-            ______
+        for element in xv:
+            new_xv.append(helper(element))
         return new_xv
     return helper(xv)
 

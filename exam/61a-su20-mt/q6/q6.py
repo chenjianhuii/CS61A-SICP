@@ -29,15 +29,15 @@ def copycat(lst1, lst2):
     >>> copycat(['a', 'b', 'c'], [1, -1, 3])
     ['c', 'c', 'c']
     """
-    def copycat_helper(______, ______, ______):
-        if ______:
-            return ______
-        if ______:
-            ______ = ______
+    def copycat_helper(l1, l2, ans):
+        if not (l1 and l2):
+            return ans
+        if l2[0] >= 0:
+            ans = ans + [l1[0]] * l2[0]
         else:
-            ______ = ______[:______]
-        return ______
-    return ______
+            ans = ans[:l2[0]]
+        return copycat_helper(l1[1:], l2[1:], ans)
+    return copycat_helper(lst1, lst2, [])
 
 # ORIGINAL SKELETON FOLLOWS
 
