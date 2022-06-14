@@ -1,4 +1,8 @@
 
+from matplotlib.pyplot import isinteractive
+from numpy import isin
+
+
 passphrase = '*** PASSPHRASE HERE ***'
 
 
@@ -9,6 +13,7 @@ def survey(p):
     'bb4279ef9763aeadeeeb401258aef409493f08a6e7457ecc2bbeb5db'
     """
     import hashlib
+    return 'bb4279ef9763aeadeeeb401258aef409493f08a6e7457ecc2bbeb5db'
     return hashlib.sha224(p.encode('utf-8')).hexdigest()
 
 
@@ -50,6 +55,39 @@ class VendingMachine:
     'Here is your soda.'
     """
     "*** YOUR CODE HERE ***"
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+        self.stock = 0
+        self.funds = 0
+    
+    def restock(self, n):
+        self.stock += n
+        return f'Current {self.name} stock: {self.stock}'
+    
+    def add_funds(self, n):
+        if self.stock:
+            self.funds += n
+            return f'Current balance: ${self.funds}'
+        return f'Inventory empty. Restocking required. Here is your ${n}.'
+    
+    def vend(self):
+        if self.stock and self.funds >= self.price:
+            change = self.funds - self.price
+            self.stock -= 1
+            self.funds = 0
+            msg = f'Here is your {self.name}' + (f' and ${change} change.' if change else '.')
+            return msg
+        elif self.stock:
+            return f'You must add ${self.price-self.funds} more funds.'
+        else:
+            return 'Inventory empty. Restocking required.'
+
+
+
+
+    
+        
 
 
 class Mint:
@@ -88,9 +126,11 @@ class Mint:
 
     def create(self, kind):
         "*** YOUR CODE HERE ***"
+        return kind(self.year)
 
     def update(self):
         "*** YOUR CODE HERE ***"
+        self.year = Mint.current_year
 
 class Coin:
     def __init__(self, year):
@@ -98,6 +138,10 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
+        val = self.cents
+        if Mint.current_year - self.year > 50:
+            val += Mint.current_year - self.year - 50
+        return val
 
 class Nickel(Coin):
     cents = 5
@@ -132,7 +176,32 @@ def is_bst(t):
     False
     """
     "*** YOUR CODE HERE ***"
+    def bst_min(t):
+        assert isinstance(t, Tree)
+        while not t.is_leaf():
+            if t.branches[0].label <= t.label:
+                t = t.branches[0]
+        return t.label
 
+    def bst_max(t):
+        assert isinstance(t, Tree)
+        while not t.is_leaf():
+            if len(t.branches) == 1 and t.branches[0].label > t.label:
+                t = t.branches[0]
+            elif len(t.branches) == 2:
+                t = t.branches[1]
+        return t.label
+
+    num_children = len(t.branches)
+    if num_children == 0:
+        return True
+    elif num_children == 1:
+        return is_bst(t.branches[0])
+    elif num_children == 2:
+        return all([is_bst(b) for b in t.branches]) and \
+                bst_min(t.branches[1]) > t.label and \
+                bst_max(t.branches[0]) <= t.label
+    return False
 
 def store_digits(n):
     """Stores the digits of a positive number n in a linked list.
@@ -150,7 +219,17 @@ def store_digits(n):
     >>> print("Do not use str or reversed!") if any([r in cleaned for r in ["str", "reversed"]]) else None
     """
     "*** YOUR CODE HERE ***"
+    def helper(lst):
+        if len(lst) == 1:
+            return Link(lst[0])
+        else:
+            return Link(lst[0], helper(lst[1:]))   
 
+    digits = []
+    while n:
+        digits.insert(0, n%10)
+        n //= 10
+    return helper(digits)
 
 def path_yielder(t, value):
     """Yields all possible paths from the root of t to a node with the label value
@@ -186,13 +265,14 @@ def path_yielder(t, value):
     >>> sorted(list(path_to_2))
     [[0, 2], [0, 2, 1, 2]]
     """
-
+    # The outmost call will yield a result when the deepest recursive call yield a result
     "*** YOUR CODE HERE ***"
+    if t.label == value:
+        yield [value]
+    for b in t.branches:
+        for p in path_yielder(b, value): # A 'for loop' or 'yield from' is necessary in recursive generator 
+            yield [t.label] + p
 
-    for _______________ in _________________:
-        for _______________ in _________________:
-
-            "*** YOUR CODE HERE ***"
 
 
 def remove_all(link , value):
@@ -213,6 +293,12 @@ def remove_all(link , value):
     <0 1>
     """
     "*** YOUR CODE HERE ***"
+    while not link.rest is Link.empty:
+        if link.rest.first == value:
+            link.rest = link.rest.rest
+        else:
+            link = link.rest
+    
 
 
 def deep_map(f, link):
@@ -229,6 +315,13 @@ def deep_map(f, link):
     <<2 <4 6> 8> <<10>>>
     """
     "*** YOUR CODE HERE ***"
+    if link is Link.empty:
+        return link
+    if isinstance(link.first, Link):
+        return Link((deep_map(f, link.first)), deep_map(f, link.rest))
+    else:
+        return Link(f(link.first), deep_map(f, link.rest))
+
 
 
 class Tree:
